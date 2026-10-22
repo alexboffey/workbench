@@ -5,8 +5,8 @@ My macOS development environment: shell, fonts, terminal, editors, and Claude Co
 ## New laptop
 
 ```sh
-git clone git@github.com:alexboffey/editor-terminal-setup.git ~/Projects/editor-terminal-setup
-cd ~/Projects/editor-terminal-setup
+git clone git@github.com:alexboffey/workbench.git ~/Projects/workbench
+cd ~/Projects/workbench
 ./bin/bootstrap
 ```
 
@@ -119,7 +119,7 @@ Ghostty has no reload CLI on macOS, so config changes need cmd+shift+, in the ap
 
 ## VS Code
 
-`vscode/settings.json` — the full user settings: Aura Dark theme, Material icon theme, Monaspace Neon Var at 15pt with the `ss01`–`ss08` texture-healing sets and `calt`/`dlig` enabled, Fira Code as fallback, format-on-save via Prettier for every web language, render affinity for the vscode-neovim extension, and a pile of notification and telemetry noise turned off.
+`vscode/settings.json` — the full user settings: Aura Dark theme, Material icon theme, Monaspace Neon Var at 15pt with the `ss01`–`ss08` texture-healing sets and `calt`/`dlig` enabled, Fira Code as fallback, format-on-save via Prettier for every web language, SQLTools connections for the local Postgres databases (dojo on 5433, systems lab on 5432; passwords for anything real are asked on connect), and a pile of notification and telemetry noise turned off.
 
 `vscode/extensions.txt` — every installed extension as a runnable `code --install-extension` line, so the file doubles as the install script. Regenerate it after adding extensions:
 

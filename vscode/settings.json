@@ -102,12 +102,8 @@
     ],
   },
   "claudeCode.preferredLocation": "sidebar",
-  "extensions.experimental.affinity": {
-    "asvetliakov.vscode-neovim": 1,
-  },
   "claudeCode.selectedModel": "opus",
   "playwright.reuseBrowser": false,
-  "chat.disableAIFeatures": true,
   "yaml.disableSchemaDetection": [
     "**/.github/workflows/*.yml",
     "**/.github/workflows/*.yaml",
@@ -115,5 +111,50 @@
     "**/.gitea/workflows/*.yaml",
     "**/.forgejo/workflows/*.yml",
     "**/.forgejo/workflows/*.yaml",
+  ],
+  "claudeCode.hideOnboarding": true,
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "git.openRepositoryInParentFolders": "always",
+  // Ported from Beekeeper Studio 2026-10-20. Local dojo passwords are the
+  // throwaway docker ones; the others ask on connect.
+  // The Neon connection is kept out of this public repo; add it by hand.
+  "sqltools.results.reuseTabs": "connection",
+  "sqltools.connections": [
+    {
+      "name": "system-lab-feedback-scratch-db",
+      "driver": "PostgreSQL",
+      "server": "localhost",
+      "port": 5432,
+      "database": "feedback_scratch",
+      "username": "lab",
+      "askForPassword": true
+    },
+    {
+      "name": "database-design-ex1",
+      "driver": "PostgreSQL",
+      "server": "localhost",
+      "port": 5433,
+      "database": "ex01",
+      "username": "dd",
+      "password": "dd"
+    },
+    {
+      "name": "database-design-ex2",
+      "driver": "PostgreSQL",
+      "server": "localhost",
+      "port": 5433,
+      "database": "ex02",
+      "username": "dd",
+      "password": "dd"
+    },
+    {
+      "name": "playground - library example",
+      "driver": "PostgreSQL",
+      "server": "localhost",
+      "port": 5433,
+      "database": "playground",
+      "username": "dd",
+      "password": "dd"
+    }
   ],
 }
