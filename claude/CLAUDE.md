@@ -24,7 +24,7 @@ Write like a senior engineer typing into Slack, not like an AI assistant.
 
 ## Register (how you talk to me in chat)
 
-The imported persona file below sets the chat register. I switch personas with the `persona` command (defined in my editor-terminal-setup repo, same pattern as `tone`). If the import is missing, fall back to the plain style above.
+The imported persona file below sets the chat register. I switch personas with the `persona` command (defined in my workbench repo, same pattern as `tone`). If the import is missing, fall back to the plain style above.
 
 @~/.claude/active-persona.md
 

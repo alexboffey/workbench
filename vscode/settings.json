@@ -119,6 +119,8 @@
   // throwaway docker ones; the others ask on connect.
   // The Neon connection is kept out of this public repo; add it by hand.
   "sqltools.results.reuseTabs": "connection",
+  "sqltools.format": { "linesBetweenQueries": 2 },
+  "[sql]": { "editor.defaultFormatter": "mtxr.sqltools" },
   "sqltools.connections": [
     {
       "name": "system-lab-feedback-scratch-db",

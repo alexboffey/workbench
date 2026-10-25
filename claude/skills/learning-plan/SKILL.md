@@ -6,7 +6,7 @@ argument-hint: "[subject and goal]"
 
 # Learning plan
 
-Turn "I want to get better at X" into a short plan and a practice repo where Claude grades and never writes the answers. Background and evidence: the vault note `ab/tech/AI Career & Learning/Learning With Claude.md`. Worked example: `~/Projects/database-design`.
+Turn "I want to get better at X" into a short plan and a practice repo where Claude grades and never writes the answers. Background and evidence: the vault note `ab/tech/AI Career & Learning/Learning With Claude.md`. Worked example: `~/Projects/dojo/database-design`.
 
 `$ARGUMENTS` may name the subject and goal. Ask for anything missing in one round of questions, no more.
 
@@ -38,7 +38,7 @@ Show the plan and get a yes before scaffolding.
 
 ## 4. Scaffold the practice repo
 
-In `~/Projects/<subject>` unless told otherwise:
+As a new track in `~/Projects/dojo/<subject>` unless told otherwise (follow the track shape in the dojo README, and add it to the README table):
 
 - `README.md`: the goal, the exercise table, how to run the checks
 - One folder per exercise: `README.md` (the brief: stories or tasks and the questions to answer), blank work files, `notes.md`, `grades.md`
