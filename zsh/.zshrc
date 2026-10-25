@@ -107,8 +107,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# secret — real value lives only in the local ~/.zshrc, never committed
-export GH_REGISTRY_PACKAGES="ghp_REPLACE_ME"
 
 prompt_context() {
   # Custom (Random emoji)
@@ -135,11 +133,8 @@ esac
 # Added by Antigravity
 export PATH="/Users/alexboffey/.antigravity/antigravity/bin:$PATH"
 
-# Linear Drafter API keys
-# secrets — real values live only in the local ~/.zshrc, never committed
-export LINEAR_API_KEY=lin_api_REPLACE_ME
-export GEMINI_API_KEY=REPLACE_ME
 
 export PATH="$HOME/.local/bin:$PATH"
 
 alias cl='claude --dangerously-skip-permissions'
+alias cdx='codex --dangerously-bypass-approvals-and-sandbox'
