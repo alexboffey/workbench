@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""Exercise setup in a temporary home without changing machine configuration."""
+import contextlib
+import io
+import json
+from pathlib import Path
+import runpy
+import subprocess
+import tempfile
+from unittest.mock import patch
+
+repo = Path(__file__).resolve().parent.parent
+namespace = runpy.run_path(str(repo / 'bin/agent-setup'), run_name='setup_test')
+with tempfile.TemporaryDirectory(prefix='workbench-agent-test-') as temporary:
+    home = Path(temporary)
+    namespace['setup_claude'].__globals__['HOME_DIR'] = home
+    settings = home / '.claude/settings.json'
+    settings.parent.mkdir(parents=True)
+    settings.write_text(json.dumps({'model': 'keep-model', 'enabledPlugins': {'github@claude-plugins-official': False}}))
+    codex = home / '.codex/AGENTS.md'
+    codex.parent.mkdir()
+    codex.write_text('Preserve my existing guidance.\n')
+    with contextlib.redirect_stdout(io.StringIO()):
+        for _ in range(2):
+            namespace['setup_claude']()
+            namespace['shared_instructions']()
+            namespace['setup_skills']()
+    actual = json.loads(settings.read_text())
+    assert actual['model'] == 'keep-model'
+    assert actual['enabledPlugins']['github@claude-plugins-official'] is False
+    assert actual['attribution'] == {'commit': '', 'pr': ''}
+    assert len(list(settings.parent.glob('settings.json.backup-*'))) == 1
+    assert codex.read_text().startswith('Preserve my existing guidance.')
+    assert codex.read_text().count('<!-- workbench:begin -->') == 1
+    assert all((p / 'SKILL.md').is_file() for p in (home / '.agents/skills').iterdir())
+    hook = home / 'hooks/commit-msg'
+    hook.parent.mkdir()
+    hook.write_text("#!/bin/sh\nsed -i '' -E '/^Co-authored-by:.*(Claude|anthropic\\.com)/Id' \"$1\"\n# keep repo hook\n")
+    with patch('subprocess.run', return_value=subprocess.CompletedProcess([], 0, str(hook.parent) + '\n', '')):
+        with contextlib.redirect_stdout(io.StringIO()):
+            namespace['setup_attribution_hook']()
+    assert '/^Co-authored-by:/Id' in hook.read_text()
+    assert '# keep repo hook' in hook.read_text()
+    calls = []
+
+    def command(args, **kwargs):
+        calls.append(args)
+        # Report configured servers as absent to exercise registration.
+        return subprocess.CompletedProcess(args, 1 if 'get' in args else 0)
+
+    with patch('subprocess.run', side_effect=command), patch('shutil.which', return_value='/test/cli'):
+        with contextlib.redirect_stdout(io.StringIO()):
+            namespace['setup_mcps'](['github', 'neon', 'context7'], ['codex'])
+    config = (home / '.codex/config.toml').read_text()
+    assert 'GITHUB_PERSONAL_ACCESS_TOKEN' in config
+    assert 'https://mcp.neon.tech/mcp' in config
+    assert '@upstash/context7-mcp@latest' in config
+    assert all(call[1:3] == ['mcp', 'get'] for call in calls), calls
+    try:
+        namespace['setup_mcps'](['jira'], ['codex'])
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError('Credential placeholders must be rejected')
+print('Passed: preservation, repeatability, backups, skills, attribution filter and MCP registration without OAuth.')

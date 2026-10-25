@@ -7,7 +7,7 @@
 #   ./bin/bootstrap          # everything
 #   ./bin/bootstrap fonts    # one or more steps by name
 #
-# Steps: bin fonts zsh git vim nvim ghostty vscode claude
+# Steps: bin fonts zsh git vim nvim ghostty vscode claude agents
 set -e
 
 SELF="$0"
@@ -36,7 +36,7 @@ install_file() {
 step_bin() {
   say "bin -> ~/.local/bin"
   mkdir -p "$HOME/.local/bin"
-  for f in bootstrap claude-setup dev persona theme-toggle; do
+  for f in bootstrap claude-setup agent-setup dev persona theme-toggle; do
     ln -sf "$REPO/bin/$f" "$HOME/.local/bin/$f"
     printf '    %s\n' "$HOME/.local/bin/$f"
   done
@@ -58,7 +58,7 @@ step_zsh() {
   say "zsh -> ~/.zshrc"
   [ -d "$HOME/.oh-my-zsh" ] || printf '    NOTE: oh-my-zsh not installed, see readme\n'
   install_file "$REPO/zsh/.zshrc" "$HOME/.zshrc"
-  printf '    ACTION: replace every REPLACE_ME in ~/.zshrc with a real key\n'
+  printf '    NOTE: private environment variables are not included in this repo\n'
 }
 
 step_git() {
@@ -118,11 +118,16 @@ step_claude() {
   printf '          npx impeccable install\n'
 }
 
-ALL="bin fonts zsh git vim nvim ghostty vscode claude"
+step_agents() {
+  say "shared Claude/Codex setup"
+  python3 "$REPO/bin/agent-setup"
+}
+
+ALL="bin fonts zsh git vim nvim ghostty vscode agents"
 STEPS="${*:-$ALL}"
 
 for s in $STEPS; do
-  case " $ALL " in
+  case " $ALL claude " in
     *" $s "*) "step_$s" ;;
     *) echo "unknown step: $s (choose from: $ALL)" >&2; exit 1 ;;
   esac

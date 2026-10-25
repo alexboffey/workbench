@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+"""Install workbench's Claude/Codex configuration without storing credentials."""
+import argparse
+import datetime
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+
+REPO = Path(__file__).resolve().parent.parent
+HOME_DIR = Path.home()
+STAMP = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+BEGIN = '<!-- workbench:begin -->'
+END = '<!-- workbench:end -->'
+
+
+def write(path, text):
+    if path.exists() and path.read_text() == text:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() or path.is_symlink():
+        shutil.copy2(path, str(path) + '.backup-' + STAMP)
+    path.write_text(text)
+    print('updated', path)
+
+
+def block(path, text):
+    old = path.read_text() if path.exists() else ''
+    new = BEGIN + '\n' + text.strip() + '\n' + END
+    if BEGIN in old:
+        if END not in old:
+            raise SystemExit('Incomplete managed block: ' + str(path))
+        old = re.sub(re.escape(BEGIN) + r'.*?' + re.escape(END), lambda _: new, old, flags=re.S)
+    else:
+        old = old.rstrip() + ('\n\n' if old.strip() else '') + new + '\n'
+    write(path, old)
+
+
+def link(source, dest):
+    if dest.is_symlink() and dest.resolve() == source.resolve():
+        return
+    if dest.exists() or dest.is_symlink():
+        print('kept existing', dest)
+        return
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.symlink_to(source.resolve(), target_is_directory=source.is_dir())
+    print('linked', dest)
+
+
+def merge(defaults, current):
+    result = dict(defaults)
+    for key, value in current.items():
+        result[key] = merge(result[key], value) if isinstance(value, dict) and isinstance(result.get(key), dict) else value
+    return result
+
+
+def setup_claude():
+    src = REPO / 'claude'
+    dest = HOME_DIR / '.claude'
+    for name in ('settings.json', 'settings.local.json'):
+        defaults = json.loads((src / name).read_text())
+        target = dest / name
+        current = json.loads(target.read_text()) if target.exists() else {}
+        settings = merge(defaults, current)
+        if name == 'settings.json':
+            settings['attribution'] = {'commit': '', 'pr': ''}
+        write(target, json.dumps(settings, indent=2) + '\n')
+    # Existing live customisations win; new machines receive the repo defaults.
+    for name in ('CLAUDE.md', 'AGENTS.md'):
+        target = dest / name
+        if not target.exists():
+            write(target, (src / name).read_text())
+    for name in ('agents', 'commands', 'hooks', 'mcp-configs', 'rules', 'scripts', 'skills'):
+        for base, dirs, files in os.walk(src / name):
+            dirs[:] = [d for d in dirs if d not in ('.git', 'node_modules', '__pycache__')]
+            for filename in files:
+                source = Path(base) / filename
+                target = dest / source.relative_to(src)
+                if not target.exists() and not target.is_symlink():
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(source, target)
+    link(src / 'personas/standard.md', dest / 'active-persona.md')
+
+
+def setup_attribution_hook():
+    # Keep the machine's existing hooks and change only its attribution filter.
+    result = subprocess.run(['git', 'config', '--global', '--get', 'core.hooksPath'], capture_output=True, text=True)
+    if result.returncode != 0:
+        print('no global hooks directory; commit attribution is disabled in client instructions')
+        return
+    hooks = Path(os.path.expandvars(result.stdout.strip())).expanduser()
+    if not hooks.is_absolute():
+        print('kept relative hooksPath; no global hook was changed')
+        return
+    hook = hooks / 'commit-msg'
+    if not hook.exists():
+        print('no existing commit-msg hook; commit attribution is disabled in client instructions')
+        return
+    text = hook.read_text()
+    old = '/^Co-authored-by:.*(Claude|anthropic\\.com)/Id'
+    if old in text:
+        write(hook, text.replace(old, '/^Co-authored-by:/Id'))
+
+
+def shared_instructions():
+    codex = HOME_DIR / '.codex'
+    # Claude's @file import syntax is not assumed to work in Codex.
+    text = (REPO / 'claude/CLAUDE.md').read_text()
+    text = text.replace('@~/.claude/active-persona.md', 'Read ~/.claude/active-persona.md if it exists before replying. Apply it to chat only.')
+    text = text.replace('Do not add the `boff/` prefix yourself, the hook does it.', 'When creating a worktree yourself, use branch boff/<name>; do not assume Claude hooks run in Codex.')
+    text += '\n\nNever add Co-authored-by trailers or AI attribution to commits or PR descriptions.\n'
+    block(codex / 'AGENTS.md', text)
+    block(HOME_DIR / '.claude/CLAUDE.md', 'Never add Co-authored-by trailers or AI attribution to commits or PR descriptions.')
+
+
+def setup_skills():
+    roots = [('claude', HOME_DIR / '.claude/skills'), ('workbench', REPO / 'claude/skills')]
+    inventory = HOME_DIR / '.claude/plugins/installed_plugins.json'
+    if inventory.exists():
+        for name, entries in json.loads(inventory.read_text()).get('plugins', {}).items():
+            for entry in entries:
+                if entry.get('scope') == 'user':
+                    roots.append((name.split('@')[0], Path(entry['installPath']) / 'skills'))
+    target = HOME_DIR / '.agents/skills'
+    target.mkdir(parents=True, exist_ok=True)
+    seen = set()
+    count = 0
+    for origin, root in roots:
+        for base, dirs, files in os.walk(root, followlinks=True):
+            dirs[:] = [d for d in dirs if d not in ('.git', 'node_modules', '__pycache__')]
+            if 'SKILL.md' not in files:
+                continue
+            source = Path(base).resolve()
+            if source in seen:
+                continue
+            seen.add(source)
+            dest = target / source.name
+            if (dest / 'SKILL.md').exists() and not (dest.is_symlink() and dest.resolve() == source):
+                if (dest / 'SKILL.md').read_bytes() == (source / 'SKILL.md').read_bytes():
+                    continue
+                dest = target / (origin + '-' + source.name)
+            link(source, dest)
+            count += 1
+    print('skill folders processed:', count)
+    print('Claude-only tools, hooks and paths in skills may need adaptation; linking does not supply them.')
+
+
+def catalogue():
+    servers = json.loads((REPO / 'claude/mcp-configs/mcp-servers.json').read_text())['mcpServers']
+    # Prefer the endpoint used by the current GitHub plugin over the old npm server.
+    servers.update({
+        'github': {'url': 'https://api.githubcopilot.com/mcp/'},
+        'neon': {'url': 'https://mcp.neon.tech/mcp'},
+        'stripe': {'url': 'https://mcp.stripe.com'},
+        'resend': {'url': 'https://mcp.resend.com/mcp'},
+        'postman': {'url': 'https://mcp.postman.com/mcp'},
+        'linear': {'url': 'https://mcp.linear.app/mcp'},
+        'netlify': {'url': 'https://netlify-mcp.netlify.app/mcp'},
+        'chrome-devtools': {'command': 'npx', 'args': ['-y', 'chrome-devtools-mcp@1.11.0']},
+    })
+    return servers
+
+
+def setup_mcps(names, clients):
+    servers = catalogue()
+    for name in names:
+        if name not in servers:
+            raise SystemExit('Unknown MCP: ' + name)
+        config = servers[name]
+        if 'YOUR_' in json.dumps(config) or '/path/to/' in json.dumps(config):
+            raise SystemExit(name + ' needs project paths or credentials. Configure it locally first; see readme.')
+    for client in clients:
+        if not shutil.which(client):
+            print('skipped MCP registration: CLI missing:', client)
+            continue
+        for name in names:
+            config = servers[name]
+            if client == 'claude':
+                settings = json.loads((HOME_DIR / '.claude/settings.json').read_text())
+                enabled = settings.get('enabledPlugins', {})
+                plugin_name = 'chrome-devtools-mcp' if name == 'chrome-devtools' else name
+                live_path = HOME_DIR / '.claude.json'
+                live = json.loads(live_path.read_text()) if live_path.exists() else {}
+                declared = {key.lower() for key in live.get('mcpServers', {})}
+                inventory_path = HOME_DIR / '.claude/plugins/installed_plugins.json'
+                plugins = json.loads(inventory_path.read_text()).get('plugins', {}) if inventory_path.exists() else {}
+                provided = any(key.split('@')[0] == plugin_name and enabled.get(key) and entries for key, entries in plugins.items())
+                if name.lower() in declared or provided:
+                    print('kept existing Claude MCP/plugin:', name)
+                    continue
+            check = [client, 'mcp', 'get', name]
+            if subprocess.run(check, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+                print('kept existing MCP:', client, name)
+                continue
+            if client == 'claude':
+                command = ['claude', 'mcp', 'add', '--scope', 'user']
+                if 'url' in config:
+                    command += ['--transport', 'http', name, config['url']]
+                else:
+                    command += [name, '--', config['command']] + config.get('args', [])
+            else:
+                # The CLI's HTTP add command can start OAuth immediately. Write
+                # the table so registration stays separate from browser login.
+                path = HOME_DIR / '.codex/config.toml'
+                existing = path.read_text() if path.exists() else ''
+                table = ['[mcp_servers.' + json.dumps(name) + ']']
+                for key in ('url', 'command', 'args'):
+                    if key in config:
+                        table.append(key + ' = ' + json.dumps(config[key]))
+                if name == 'github':
+                    table.append('bearer_token_env_var = "GITHUB_PERSONAL_ACCESS_TOKEN"')
+                write(path, existing.rstrip() + '\n\n' + '\n'.join(table) + '\n')
+                print('registered Codex MCP:', name)
+                continue
+            subprocess.run(command, check=True)
+            if 'url' in config:
+                print('authenticate if required:', client, 'MCP', name)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--client', choices=['both', 'claude', 'codex'], default='both')
+    parser.add_argument('--mcp', action='append', default=[], metavar='NAME', help='register one MCP in selected clients; repeatable')
+    parser.add_argument('--list-mcps', action='store_true')
+    parser.add_argument('--tone', type=Path, help='private tone document to link; never copied into this repo')
+    args = parser.parse_args()
+    if args.list_mcps:
+        for name in sorted(catalogue()):
+            print(name)
+        return
+    if args.tone and not args.tone.expanduser().is_file():
+        parser.error('--tone must name an existing file')
+    setup_attribution_hook()
+    if args.client in ('both', 'claude'):
+        setup_claude()
+    if args.client in ('both', 'codex'):
+        shared_instructions()
+        setup_skills()
+    if args.tone:
+        link(args.tone.expanduser(), HOME_DIR / '.claude/active-tone-of-voice.md')
+    if args.mcp:
+        setup_mcps(args.mcp, ['claude', 'codex'] if args.client == 'both' else [args.client])
+    print('Setup complete. Restart clients if changes are not visible. OAuth sign-ins remain separate.')
+
+
+if __name__ == '__main__':
+    main()

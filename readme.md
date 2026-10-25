@@ -20,7 +20,7 @@ Run individual steps by name:
 
 | Step | Installs | To |
 |---|---|---|
-| `bin` | `bootstrap`, `claude-setup`, `dev`, `persona`, `theme-toggle` (symlinked, so `git pull` updates them) | `~/.local/bin` |
+| `bin` | `bootstrap`, `agent-setup`, `claude-setup`, `dev`, `persona`, `theme-toggle` (symlinked, so `git pull` updates them) | `~/.local/bin` |
 | `fonts` | Fira Code + 5 Monaspace variable fonts | `~/Library/Fonts` |
 | `zsh` | `.zshrc` | `~/.zshrc` |
 | `git` | `.gitconfig` | `~/.gitconfig` |
@@ -28,7 +28,7 @@ Run individual steps by name:
 | `nvim` | kickstart-based config + `lazy-lock.json` | `~/.config/nvim` |
 | `ghostty` | config + the noctis themes | `~/Library/Application Support/com.mitchellh.ghostty`, `~/.config/ghostty/themes` |
 | `vscode` | `settings.json` + every extension in `extensions.txt` | `~/Library/Application Support/Code/User` |
-| `claude` | global Claude Code config, geezer persona | `~/.claude` |
+| `agents` | shared Claude Code and Codex config, skills | `~/.claude`, `~/.codex`, `~/.agents/skills` |
 
 ### Prerequisites
 
@@ -158,7 +158,7 @@ Deliberately not included:
 - Third-party skills that install and update themselves (see below)
 - Machine state: sessions, history, caches, plugin installs, memory, `~/.claude.json` (holds OAuth tokens)
 
-`bin/claude-setup` does the install on its own if you don't want the full bootstrap. It rsyncs, so it overlays rather than wipes. New Claude Code sessions pick it up.
+`bin/claude-setup` does the install on its own if you don't want the full bootstrap. It uses the shared installer in Claude-only mode. Existing settings take precedence, attribution is disabled, and missing support files are installed. Files changed by the installer get timestamped backups. New Claude Code sessions pick it up.
 
 ### Plugins
 
@@ -202,3 +202,50 @@ Two separate layers, both driven by symlinks that `~/.claude/CLAUDE.md` referenc
 - `hooks/create-worktree.sh`: `WorktreeCreate` hook that puts worktrees in `.worktrees/<repo>/<name>` next to the clone and prefixes branches `boff/`
 - `commands/`: personal slash commands (`update-goals`) on top of the ECC command set
 - `personas/`: currently `geezer` and `standard`
+
+## Shared Claude Code and Codex setup
+
+Run `./bin/agent-setup` from this repo. Python 3 is required. Run `./bin/test-agent-setup` to check it in a temporary home. It installs Claude defaults, preserves existing settings, disables Claude commit and PR attribution, and adds a managed section to Codex's global `AGENTS.md`. The Codex section uses the writing, persona, tone and worktree guidance in `claude/CLAUDE.md`. Existing instructions outside that section are preserved. If the existing global Git commit hook has the Claude attribution filter, setup broadens it to strip every `Co-authored-by` trailer while retaining the rest of the hook. Git cryptographic signing is unchanged.
+
+```sh
+./bin/agent-setup
+./bin/agent-setup --client codex
+./bin/agent-setup --list-mcps
+./bin/agent-setup --mcp context7 --mcp chrome-devtools --mcp neon
+./bin/agent-setup --tone "$HOME/Documents/Obsidian Vault/ab/meta/Work Tone of Voice.md"
+```
+
+`./bin/bootstrap agents` runs the same setup; the full bootstrap includes it. `claude-setup` remains available for Claude-only installation. The CLIs themselves must already be installed for MCP registration.
+
+Skills are linked into `~/.agents/skills` from the local Claude skills directory, workbench and locally installed Claude plugins. This includes installed plugins that are currently disabled in Claude. Complete folders stay at their source so scripts and relative references remain available. Existing Codex skills are kept; different skills with the same directory name receive a source prefix. Run setup again after installing or updating Claude plugins. A fresh machine gets workbench's skills; skills from other repos and plugin installs require those sources to be installed locally first.
+
+Linking a skill makes its instructions available. It does not provide Claude-only tools, hooks or connectors. Browser, document, synced and plugin skills may need their dependencies adapted before they work in Codex. The setup does not copy OAuth sessions, logs, memory or private tone documents into the repo.
+
+The tone option links your private document at `~/.claude/active-tone-of-voice.md`. Codex reads that same path when drafting as you. An existing link or file is preserved; change it locally if you want a different tone. Persona changes through `persona` apply to both clients on their next session.
+
+### MCPs
+
+The catalogue lives in `claude/mcp-configs/mcp-servers.json`. The shared installer also knows the endpoints from the locally inspected Neon, Stripe, Resend, Postman, Linear, Netlify and Chrome DevTools integrations. GitHub uses its remote MCP endpoint rather than the catalogue's older npm package.
+
+No MCP is registered unless requested with `--mcp NAME`. Registration adds a missing server to both clients and preserves an existing server with that name. Entries containing credential or project-path placeholders require local configuration first. The script does not register every service automatically.
+
+For remote services that support OAuth, authenticate after registration:
+
+```sh
+codex mcp login neon
+codex mcp login stripe
+codex mcp list
+claude mcp list
+```
+
+Use Claude's `/mcp` screen for its authentication. For Codex servers requiring API tokens, configure `bearer_token_env_var` for HTTP or `env_vars` for local processes in `~/.codex/config.toml`, and provide those variables to the client process. Desktop apps may need their environment configured separately. Keep credentials out of this repo. The catalogue is an inventory of configuration examples, not a claim that every provider has been tested.
+
+Start with Context7 (library docs), Chrome DevTools (browser debugging), and the service integrations you use. Filesystem and sequential-thinking servers are optional. Longhand's catalogue entry indexes Claude logs, and Devfleet dispatches Claude agents; registering them does not change those behaviours for Codex.
+
+Official Codex references: [MCP setup](https://learn.chatgpt.com/docs/extend/mcp?surface=cli), [skills](https://learn.chatgpt.com/docs/build-skills).
+
+### Desktop and browser control
+
+In the desktop app, install Computer Use from Plugins, enable its server and skill, and grant macOS Screen Recording and Accessibility permissions when prompted. This needs user interaction; the setup script does not grant OS permissions or install the desktop plugin. See [Computer Use](https://learn.chatgpt.com/docs/computer-use).
+
+CLI browser automation can use the `chrome-devtools` or `playwright` MCP entries. These are separate from desktop Computer Use.
