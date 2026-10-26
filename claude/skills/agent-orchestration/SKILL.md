@@ -1,3 +1,8 @@
+---
+name: agent-orchestration
+description: "Which ECC subagent fits which task and how to run them in parallel. Use when deciding whether to delegate to a subagent."
+---
+
 # Agent Orchestration
 
 ## Available Agents

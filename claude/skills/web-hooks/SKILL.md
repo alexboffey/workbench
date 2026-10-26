@@ -1,4 +1,9 @@
-> This file extends [common/hooks.md](../common/hooks.md) with web-specific hook recommendations.
+---
+name: web-hooks
+description: "Recommended Claude Code hooks for frontend repos (prettier, eslint, tsc, stylelint). Use when wiring hooks into a web project."
+---
+
+> Extends the `common/hooks.md` rule with web-specific hook recommendations.
 
 # Web Hooks
 

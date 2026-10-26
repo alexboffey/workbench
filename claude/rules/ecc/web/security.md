@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.{ts,tsx,js,jsx,mjs,cjs}"
+  - "**/*.{css,scss,html,vue,svelte,astro}"
+---
 > This file extends [common/security.md](../common/security.md) with web-specific security content.
 
 # Web Security Rules

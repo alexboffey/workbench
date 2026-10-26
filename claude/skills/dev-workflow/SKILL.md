@@ -1,3 +1,8 @@
+---
+name: dev-workflow
+description: "Feature workflow: research and reuse, plan, TDD, review, commit. Use when starting a non-trivial feature."
+---
+
 # Development Workflow
 
 > This file extends [common/git-workflow.md](./git-workflow.md) with the full feature development process that happens before git operations.

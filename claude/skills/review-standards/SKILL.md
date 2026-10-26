@@ -1,3 +1,8 @@
+---
+name: review-standards
+description: "Code review checklist, severity levels and security review triggers. Use when reviewing code or before merging a PR."
+---
+
 # Code Review Standards
 
 ## Purpose
@@ -121,4 +126,4 @@ This rule works with:
 - [testing.md](testing.md) - Test coverage requirements
 - [security.md](security.md) - Security checklist
 - [git-workflow.md](git-workflow.md) - Commit standards
-- [agents.md](agents.md) - Agent delegation
+- `agent-orchestration` skill - Agent delegation
