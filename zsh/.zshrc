@@ -136,5 +136,8 @@ export PATH="/Users/alexboffey/.antigravity/antigravity/bin:$PATH"
 
 export PATH="$HOME/.local/bin:$PATH"
 
+# macOS defaults to 256 open files, too few for Claude Code with MCP servers
+ulimit -n 65536
+
 alias cl='claude --dangerously-skip-permissions'
 alias cdx='codex --dangerously-bypass-approvals-and-sandbox'

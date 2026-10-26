@@ -96,7 +96,7 @@ dev
 
 ## Shell
 
-`zsh/.zshrc` — oh-my-zsh with the `agnoster` theme, a `prompt_context` override that puts a random emoji in the prompt, PATH entries for bun, pnpm, nvm, Antigravity and `~/.local/bin`, and `alias cl='claude --dangerously-skip-permissions'`.
+`zsh/.zshrc` — oh-my-zsh with the `agnoster` theme, a `prompt_context` override that puts a random emoji in the prompt, PATH entries for bun, pnpm, nvm, Antigravity and `~/.local/bin`, `ulimit -n 65536` (the macOS default of 256 is too low for Claude Code), and `alias cl='claude --dangerously-skip-permissions'`.
 
 API keys are `REPLACE_ME` placeholders. Fill them in on the local `~/.zshrc` only, never here.
 
