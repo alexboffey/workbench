@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# workbench <command> [args]: run a script from this repo's bin/.
+# workbench with no args lists the commands.
+set -e
+
+BIN="$(cd "$(dirname "$(readlink "$0" || echo "$0")")" && pwd)"
+CMD="$1"
+
+if [ -z "$CMD" ] || [ ! -x "$BIN/$CMD" ] || [ "$CMD" = workbench ]; then
+  [ -n "$CMD" ] && echo "unknown command: $CMD" >&2
+  echo "usage: workbench <command> [args]"
+  echo "commands:"
+  for f in "$BIN"/*; do
+    n=$(basename "$f")
+    [ "$n" = workbench ] || printf '  %-17s %s\n' "$n" "$(sed -n '2s/^# *//p' "$f")"
+  done
+  [ -z "$CMD" ] || exit 1
+  exit 0
+fi
+
+shift
+exec "$BIN/$CMD" "$@"

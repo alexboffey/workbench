@@ -20,7 +20,7 @@ Run individual steps by name:
 
 | Step | Installs | To |
 |---|---|---|
-| `bin` | `bootstrap`, `agent-setup`, `claude-setup`, `dev`, `persona`, `theme-toggle`, `ws` (symlinked, so `git pull` updates them) | `~/.local/bin` |
+| `bin` | `bootstrap`, `agent-setup`, `claude-setup`, `dev`, `persona`, `theme-toggle`, `ws`, `workbench` (symlinked, so `git pull` updates them) | `~/.local/bin` |
 | `fonts` | Fira Code + 5 Monaspace variable fonts | `~/Library/Fonts` |
 | `zsh` | `.zshrc` | `~/.zshrc` |
 | `git` | `.gitconfig` | `~/.gitconfig` |
@@ -85,6 +85,10 @@ persona standard   # plain senior-engineer register
 ```
 
 New personas are just markdown files: drop `claude/personas/<name>.md` in and `persona <name>` picks it up. Switches apply to new Claude Code sessions.
+
+## workbench
+
+`bin/workbench <command> [args]` runs any script in `bin/` by name, e.g. `workbench ws ab` or `workbench theme-toggle`. Run it with no arguments to list commands with the description from each script's header comment. New utilities only need a file in `bin/`. The standalone commands still work too.
 
 ## ws
 
