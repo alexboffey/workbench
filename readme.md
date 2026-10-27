@@ -92,7 +92,7 @@ New personas are just markdown files: drop `claude/personas/<name>.md` in and `p
 
 ## ws
 
-`bin/ws <name>` opens a new Ghostty window from `ghostty/workspaces/<name>`. Each line is one tab: `title | directory | command`. The tab is split left/right, with the command on the left (default `claude --continue`) and a plain shell on the right. Run `ws` with no name to list workspaces.
+`bin/ws <name>` opens a new Ghostty window from `ghostty/workspaces/<name>`. Each line is one tab: `title | directory | command`. The tab is split left/right, with the command on the left (default `cl --continue`, i.e. bypass permissions) and a plain shell on the right. Run `ws` with no name to list workspaces.
 
 ```sh
 ws ab

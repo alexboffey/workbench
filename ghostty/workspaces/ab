@@ -1,4 +1,4 @@
-# title | directory | left-pane command (optional, default: claude --continue)
+# title | directory | left-pane command (optional, default: cl --continue)
 # Right pane is always a plain shell in the same directory.
 alexboffey.co.uk | ~/Projects/alexboffey
 awayfans         | ~/Projects/awayfans

@@ -18,7 +18,7 @@ WIN=""
 grep -v '^[[:space:]]*\(#\|$\)' "$DIR/$NAME" | while IFS='|' read -r title dir cmd; do
   title=$(trim "$title")
   dir=$(trim "$dir"); dir="${dir/#\~/$HOME}"
-  cmd=$(trim "$cmd"); [ -n "$cmd" ] || cmd="claude --continue"
+  cmd=$(trim "$cmd"); [ -n "$cmd" ] || cmd="cl --continue"
   [ -d "$dir" ] || { echo "skip $title: $dir not found" >&2; continue; }
 
   WIN=$(osascript - "$title" "$dir" "$cmd" "$WIN" <<'APPLESCRIPT'
