@@ -1,0 +1,8 @@
+# title | directory | left-pane command (optional, default: claude --continue)
+# Right pane is always a plain shell in the same directory.
+alexboffey.co.uk | ~/Projects/alexboffey
+awayfans         | ~/Projects/awayfans
+systems-lab      | ~/Projects/systems-lab
+dojo             | ~/Projects/dojo/database-design
+Obsidian Vault   | ~/Documents/Obsidian Vault
+career-ops       | ~/Projects/career-ops

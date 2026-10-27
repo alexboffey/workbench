@@ -20,7 +20,7 @@ Run individual steps by name:
 
 | Step | Installs | To |
 |---|---|---|
-| `bin` | `bootstrap`, `agent-setup`, `claude-setup`, `dev`, `persona`, `theme-toggle` (symlinked, so `git pull` updates them) | `~/.local/bin` |
+| `bin` | `bootstrap`, `agent-setup`, `claude-setup`, `dev`, `persona`, `theme-toggle`, `ws` (symlinked, so `git pull` updates them) | `~/.local/bin` |
 | `fonts` | Fira Code + 5 Monaspace variable fonts | `~/Library/Fonts` |
 | `zsh` | `.zshrc` | `~/.zshrc` |
 | `git` | `.gitconfig` | `~/.gitconfig` |
@@ -85,6 +85,16 @@ persona standard   # plain senior-engineer register
 ```
 
 New personas are just markdown files: drop `claude/personas/<name>.md` in and `persona <name>` picks it up. Switches apply to new Claude Code sessions.
+
+## ws
+
+`bin/ws <name>` opens a new Ghostty window from `ghostty/workspaces/<name>`. Each line is one tab: `title | directory | command`. The tab is split left/right, with the command on the left (default `claude --continue`) and a plain shell on the right. Run `ws` with no name to list workspaces.
+
+```sh
+ws ab
+```
+
+Add a workspace by dropping another file into `ghostty/workspaces/`. Uses Ghostty's AppleScript support (1.3+). Tab colours can't be scripted yet, so set those by right-clicking the tab.
 
 ## dev
 

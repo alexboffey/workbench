@@ -36,7 +36,7 @@ install_file() {
 step_bin() {
   say "bin -> ~/.local/bin"
   mkdir -p "$HOME/.local/bin"
-  for f in bootstrap claude-setup agent-setup dev persona theme-toggle; do
+  for f in bootstrap claude-setup agent-setup dev persona theme-toggle ws; do
     ln -sf "$REPO/bin/$f" "$HOME/.local/bin/$f"
     printf '    %s\n' "$HOME/.local/bin/$f"
   done
