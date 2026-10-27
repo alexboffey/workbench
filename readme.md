@@ -131,6 +131,10 @@ API keys are `REPLACE_ME` placeholders. Fill them in on the local `~/.zshrc` onl
 
 Ghostty has no reload CLI on macOS, so config changes need cmd+shift+, in the app (or `theme-toggle`, which clicks the menu item for you).
 
+`window-save-state = always` brings windows, tabs and their folders back after a quit. It does not restart what was running in them, so long-running Claude sessions die with the app. Use `ws` (above) to rebuild a set of tabs and resume Claude in each.
+
+`ghostty/workspaces/` holds the `ws` workspace files, one per workspace. `ab` is my main set of six project tabs.
+
 ## VS Code
 
 `vscode/settings.json` — the full user settings: Aura Dark theme, Material icon theme, Monaspace Neon Var at 15pt with the `ss01`–`ss08` texture-healing sets and `calt`/`dlig` enabled, Fira Code as fallback, format-on-save via Prettier for every web language, SQLTools connections for the local Postgres databases (dojo on 5433, systems lab on 5432; passwords for anything real are asked on connect), and a pile of notification and telemetry noise turned off.
@@ -140,6 +144,10 @@ Ghostty has no reload CLI on macOS, so config changes need cmd+shift+, in the ap
 ```sh
 code --list-extensions | sed 's|^|code --install-extension |' > vscode/extensions.txt
 ```
+
+## Hyper (legacy)
+
+`hyper/.hyper.js` is the old Hyper terminal config (Monaspace Neon at 14pt, zsh). Ghostty replaced it, so bootstrap doesn't install it. Kept for reference. Copy it to `~/.hyper.js` by hand if you ever need it.
 
 ## Vim & Neovim
 
@@ -160,9 +168,9 @@ What's in it:
 - `commands/` — slash commands
 - `hooks/` — hook scripts (worktree placement, memory persistence) plus `hooks.json`
 - `mcp-configs/mcp-servers.json` — MCP server catalogue, all credentials are `YOUR_*_HERE` placeholders
-- `rules/` — the ECC ruleset (common + web)
+- `rules/`: the ECC ruleset, `common`, `web`, and one folder per language (TypeScript, React, Python, Go, Rust and others)
 - `scripts/` — ECC helper scripts
-- `skills/` — skills that live only in `~/.claude`: `ecc`, plus `learning-plan` and `learning-retro` (Claude as a teacher for practice repos, see the vault note `Learning With Claude`)
+- `skills/`: skills that live only in `~/.claude`: `ecc` (unused ECC skills parked in `ecc/_archive_unused/`), plus `learning-plan` and `learning-retro` (Claude as a teacher for practice repos, see the vault note `Learning With Claude`)
 - `personas/` — chat personas, managed by `bin/persona` (see above)
 
 Deliberately not included:

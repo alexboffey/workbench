@@ -12,7 +12,7 @@ if [ -z "$CMD" ] || [ ! -x "$BIN/$CMD" ] || [ "$CMD" = workbench ]; then
   echo "commands:"
   for f in "$BIN"/*; do
     n=$(basename "$f")
-    [ "$n" = workbench ] || printf '  %-17s %s\n' "$n" "$(sed -n '2s/^# *//p' "$f")"
+    [ "$n" = workbench ] || printf '  %-17s %s\n' "$n" "$(sed -n '2{s/^[#" ]*//;s/"*$//;p;}' "$f")"
   done
   [ -z "$CMD" ] || exit 1
   exit 0
