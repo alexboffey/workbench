@@ -145,10 +145,6 @@ Ghostty has no reload CLI on macOS, so config changes need cmd+shift+, in the ap
 code --list-extensions | sed 's|^|code --install-extension |' > vscode/extensions.txt
 ```
 
-## Hyper (legacy)
-
-`hyper/.hyper.js` is the old Hyper terminal config (Monaspace Neon at 14pt, zsh). Ghostty replaced it, so bootstrap doesn't install it. Kept for reference. Copy it to `~/.hyper.js` by hand if you ever need it.
-
 ## Vim & Neovim
 
 `vim/.vimrc` is the minimal fallback for plain `vim`: syntax on, dark background, 4-space soft tabs.
