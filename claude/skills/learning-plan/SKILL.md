@@ -6,7 +6,7 @@ argument-hint: "[subject and goal]"
 
 # Learning plan
 
-Turn "I want to get better at X" into a short plan and a practice repo where Claude grades and never writes the answers. Background and evidence: the vault note `ab/tech/AI Career & Learning/Learning With Claude.md`. Worked example: `~/Projects/dojo/database-design`.
+Turn "I want to get better at X" into a short plan and a practice repo where Claude grades and never writes the answers. Background and evidence: the vault note `ab/tech/AI Career & Learning/Learning With Claude.md`. Worked examples: `~/Projects/dojo/database-design` (exercises with runnable checks) and `~/Projects/dojo/system-design` (a course mapped to quizzes, drills and interviews).
 
 `$ARGUMENTS` may name the subject and goal. Ask for anything missing in one round of questions, no more.
 
@@ -21,22 +21,40 @@ Pin down, in one line each:
 
 Check the vault (`ab/career/Study/`, `ab/tech/`) for an existing roadmap or notes on the subject first, and link to it rather than duplicate it.
 
-## 2. Gaps
+## 2. Syllabus
+
+If a respected course, book or curriculum covers the subject (Hello Interview for system design, for example), pull its outline first and use it as the spine. Write it into the track as `docs/<source>-outline.md`: each section and lesson with links, what's locked or paywalled, and where the track covers it. Empty cells in that map are the gaps to plan for.
+
+- Don't copy paywalled content. Note it's locked, and find the free material that covers the same ground (often the source's own worked examples)
+- Reuse its section names and order so the learner can move between the course and the repo
+- If there's no good syllabus, skip this step
+
+## 3. Gaps
 
 Three short lists: can do, can't do yet, needed by the goal. The plan only covers "can't do" items that are also "needed". If unsure where they stand, give one 10-minute diagnostic task and judge from that, rather than asking them to self-rate.
 
-## 3. Plan
+## 4. Plan
+
+Three kinds of practice. Use the ones the goal needs:
+
+| Kind | Length | What it's for | Feedback |
+| --- | --- | --- | --- |
+| Quiz | About 10 min, 8 short questions | Learning one lesson's concepts | Marked and answered after each question |
+| Drill | 15 to 20 min, spoken | Testing one area under interview conditions | No hints, marked at the end |
+| Exercise | 45 min to 2 h | The full thing the goal tests | A runnable check, or a graded interview |
+
+Quizzes follow the syllabus one to one. Drills cover a syllabus section each, with their own setting that isn't any exercise's. Exercises are the plan below.
 
 - 3 to 6 exercises, in order, each adding one or two new skills. A table: number, name, new skills, timebox
 - Default to the format the goal tests (for interviews: sketch, build, a few checks, one question answered out loud). One deep dive at most, and only for something that needs real understanding
 - No write-up or documentation steps unless the goal tests them. Ceremony before the skill is the main way these plans go wrong
-- Every exercise needs a runnable check: a script, tests, a database rebuild, a compiler. Feedback comes from running it, not from Claude reading it
+- Every exercise needs a runnable check: a script, tests, a database rebuild, a compiler. Feedback comes from running it, not from Claude reading it. Spoken practice (interviews, drills, quizzes) can't run, so it gets an answer key instead (below)
 - Mark what Claude writes (seed data, fixtures, setup, boilerplate: anything that teaches nothing) and what the learner writes (the skill itself)
 - Space new concepts out: no more than two or three new ideas per session
 
 Show the plan and get a yes before scaffolding.
 
-## 4. Scaffold the practice repo
+## 5. Scaffold the practice repo
 
 As a new track in `~/Projects/dojo/<subject>` unless told otherwise (follow the track shape in the dojo README, and add it to the README table):
 
@@ -45,6 +63,8 @@ As a new track in `~/Projects/dojo/<subject>` unless told otherwise (follow the 
 - The run script, tested end to end
 - Test data with traps: every question gets a case it could get wrong (empty groups, missing children, duplicates, edge values). Avoid coincidences that make wrong answers pass, such as ids that line up across tables
 - `CLAUDE.md` with the teacher rules below, filled in for this subject
+- If there are quizzes or drills: `quizzes/<name>.md` and `drills/<name>.md` hold only what the learner sees (the questions, or a drill's short setting) plus a "Notes after" section. Say in each when to do it, and if it gives away an exercise, say to do it after that one
+- `grader/` for every answer key, with one file per quiz, drill and spoken exercise. A key holds facts to give only when asked, what a solid answer covers, pushes for vague answers, and a "Marking" section. Label it clearly and exclude it from editor search. The teacher rules say never to open it except to run or grade that item
 
 ### Teacher rules template for `CLAUDE.md`
 
@@ -65,6 +85,11 @@ Practice repo. The owner is learning, so you are a teacher who grades, not someo
 - You write what teaches nothing when asked: test data, fixtures, boilerplate
 - Don't spoil later exercises
 
+## Quizzes and drills
+- "start the <name> quiz": read `grader/quizzes/<name>.md`, ask the questions one at a time. After each answer, mark it Right, Partly or Wrong and give the key's answer briefly. End with the score and the misses for "Notes after"
+- "start the <name> drill": read `grader/drills/<name>.md`, give only the setting, ask its questions one at a time as an interviewer. No hints until the end, then mark as the key says
+- Never open `grader/` otherwise, and never quote a key before the learner has answered
+
 ## Grading
 1. Read the brief and every file the owner wrote
 2. Run the checks: <command>
@@ -81,10 +106,10 @@ Start at 1. Go one further only when asked again or clearly stuck on the same po
 4. Analogy: a small worked example in the other domain. Never the exercise's own code
 ```
 
-## 5. Hand over
+## 6. Hand over
 
-- Link the plan from the relevant vault roadmap or study note, as a checklist
-- Tell them how to start: the first exercise, and the phrase to get graded ("grade exercise 1")
+- Link the plan from the relevant vault roadmap or study note, as a checklist, in syllabus order with a priority for the time available
+- Tell them how to start: the first quiz, drill or exercise, and the phrases ("start the X quiz", "start the X drill", "grade exercise 1")
 - Suggest the `learning-retro` skill at the end of each session
 
 ## Don'ts

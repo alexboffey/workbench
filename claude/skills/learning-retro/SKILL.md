@@ -13,6 +13,7 @@ Close out a practice session so the next one starts in the right place and the p
 From the conversation and the repo (git log since the session started, `notes.md`, `grades.md`):
 
 - What got done: exercises, questions or tasks passed, what's still open
+- **Quiz and drill scores.** Score out of 8 per quiz, and the mark per drill question. Note the topics missed. A topic missed in two sessions goes on the shaky list
 - **Attempts per task.** Count how many tries each one took. A falling count across the session is the clearest evidence of progress, so show it
 - Concepts met for the first time, and which ones needed the most hints (hint level reached)
 - Time sinks: where the time went that wasn't the skill (setup, tooling, write-ups, review rounds)
@@ -29,6 +30,7 @@ From the conversation and the repo (git log since the session started, `notes.md
 
 Ask once which of these they want, defaulting to all:
 
+- **Scores log:** a dated line per quiz or drill in the track's `docs/progress.md` (create it if missing): name, score, topics missed. Keeps weak topics visible across sessions
 - **Exercise `notes.md`:** an iterations section (each attempt, what was wrong, the lesson), if it isn't there yet
 - **A handwritten-note summary** in chat: the core rules from the session, one notebook page, a worked example in the teaching domain (not the exercise)
 - **Vault log:** a dated entry (Done, Decisions, Next) at the top of the relevant log, for example `ab/career/Job Search/Log.md`, and a progress line on the roadmap item. Follow that folder's `_Index` rules
