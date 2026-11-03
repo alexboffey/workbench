@@ -45,6 +45,7 @@ code --install-extension ni3rav.andromeda-night
 code --install-extension orta.vscode-jest
 code --install-extension pflannery.vscode-versionlens
 code --install-extension pkief.material-icon-theme
+code --install-extension pomdtr.excalidraw-editor
 code --install-extension prisma.prisma
 code --install-extension quicktype.quicktype
 code --install-extension redhat.vscode-yaml
