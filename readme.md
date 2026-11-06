@@ -188,6 +188,7 @@ These live under `~/.claude/skills/` on my machine but are **not** in this repo,
 
 ```sh
 npx impeccable install    # frontend design/craft skill, Apache 2.0
+npx skills add mvanhorn/last30days-skill    # last30days: research a topic across the last 30 days of Reddit/X/web
 ```
 
 The `ecc` skill set (agents, rules, scripts, skills) *is* vendored, under `claude/`, because it's installed by copying files rather than by a package manager.
@@ -203,7 +204,7 @@ The `ecc` skill set (agents, rules, scripts, skills) *is* vendored, under `claud
 | `~/Projects/ai-agents` | `claude-skill-creator`, `code-standards-skill`, `documentation-skill` | symlinked from that repo |
 | Obsidian vault (`.claude/skills/`) | `obsidian-note`, `organise`, `find-stocks`, `stock-sentiment` and the other `ov-*` personal-vault skills | symlinked from the vault |
 | Work repos | repo-local skills (a11y audits, token migration, release and QA workflows) | symlinked from each repo; GEEIQ-internal, never vendored here |
-| Third-party | `impeccable`, `humanizer` | self-installing (see above) |
+| Third-party | `impeccable`, `humanizer`, `last30days` (in `~/.agents/skills/`) | self-installing (see above) |
 
 Recreating the symlinks is manual on a new machine: clone the source repo, then `ln -s <repo>/skills/<name> ~/.claude/skills/<name>`.
 

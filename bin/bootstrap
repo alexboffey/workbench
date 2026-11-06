@@ -116,6 +116,7 @@ step_claude() {
   printf '          from settings.json on the next Claude Code launch\n'
   printf '    NOTE: third-party skills are not vendored here, install them with:\n'
   printf '          npx impeccable install\n'
+  printf '          npx skills add mvanhorn/last30days-skill\n'
 }
 
 step_agents() {
