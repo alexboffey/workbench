@@ -57,14 +57,14 @@ Also needed:
 
 ## theme-toggle
 
-`bin/theme-toggle` flips VS Code and Ghostty between two theme pairs in one go:
+`bin/theme-toggle` flips VS Code, Ghostty and Obsidian between light and dark in one go:
 
-| | VS Code | Ghostty |
-|---|---|---|
-| dark | Aura Dark | Aura |
-| light | Noctis Lux | noctis-lux |
+| | VS Code | Ghostty | Obsidian |
+|---|---|---|---|
+| dark | Aura Dark | Aura | dark base scheme |
+| light | Noctis Lux | noctis-lux | light base scheme |
 
-It edits `workbench.colorTheme` in VS Code's `settings.json` (applied live by VS Code) and `theme =` in `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty`, then reloads Ghostty by clicking its "Reload Configuration" menu item via AppleScript.
+It edits `workbench.colorTheme` in VS Code's `settings.json` (applied live by VS Code) and `theme =` in `~/Library/Application Support/com.mitchellh.ghostty/config.ghostty`, then reloads Ghostty by clicking its "Reload Configuration" menu item via AppleScript. For Obsidian it sets `theme` (`obsidian`/`moonstone`) in the vault's `.obsidian/appearance.json` and leaves the community theme alone. The vault defaults to `~/Documents/Obsidian Vault`, override with `OBSIDIAN_VAULT`.
 
 Installed by `bootstrap` (steps `bin`, `ghostty`, `vscode`). It needs Accessibility permission for whichever app you run it from (System Settings → Privacy & Security → Accessibility → add Ghostty). Without that the themes still switch, you just have to press cmd+shift+, in Ghostty yourself.
 
