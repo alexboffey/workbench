@@ -166,7 +166,7 @@ What's in it:
 - `mcp-configs/mcp-servers.json` — MCP server catalogue, all credentials are `YOUR_*_HERE` placeholders
 - `rules/`: the ECC ruleset, `common`, `web`, and one folder per language (TypeScript, React, Python, Go, Rust and others)
 - `scripts/` — ECC helper scripts
-- `skills/`: skills that live only in `~/.claude`: `ecc` (unused ECC skills parked in `ecc/_archive_unused/`), plus `learning-plan` and `learning-retro` (Claude as a teacher for practice repos, see the vault note `Learning With Claude`)
+- `skills/`: skills that live only in `~/.claude`: `ecc` (unused ECC skills parked in `ecc/_archive_unused/`), plus `learning-plan` and `learning-retro` (Claude as a teacher for practice repos, see the vault note `Learning With Claude`), and `short-form-video` (scripting, shooting and CapCut MCP editing for reels, with a pre-export audit script)
 - `personas/` — chat personas, managed by `bin/persona` (see above)
 
 Deliberately not included:
@@ -200,7 +200,7 @@ The `ecc` skill set (agents, rules, scripts, skills) *is* vendored, under `claud
 | Source | Skills | How it gets there |
 |---|---|---|
 | This repo (`claude/skills/`) | `ecc` | `bin/claude-setup` copies it |
-| This repo (`claude/skills/`) | `learning-plan`, `learning-retro` | symlinked from this repo, so edits here go live (`bin/claude-setup` would replace the links with copies) |
+| This repo (`claude/skills/`) | `learning-plan`, `learning-retro`, `short-form-video` | symlinked from this repo, so edits here go live (`bin/claude-setup` would replace the links with copies) |
 | `~/Projects/ai-agents` | `claude-skill-creator`, `code-standards-skill`, `documentation-skill` | symlinked from that repo |
 | Obsidian vault (`.claude/skills/`) | `obsidian-note`, `organise`, `find-stocks`, `stock-sentiment` and the other `ov-*` personal-vault skills | symlinked from the vault |
 | Work repos | repo-local skills (a11y audits, token migration, release and QA workflows) | symlinked from each repo; GEEIQ-internal, never vendored here |
